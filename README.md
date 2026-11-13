@@ -25,28 +25,27 @@ This is not another wrapper. We are modifying the model itself.
 ## Roadmap
 
 ### Phase 0 — Data Foundation (1–2 weeks)
-- [ ] Collect and clean secondary school textbooks (PDF → high-quality text)
-- [ ] Collect Konkur, Tizhooshan, and Olympiad questions with detailed solutions
-- [ ] Normalize Persian text (ZWNJ, punctuation, consistency)
-- [ ] Build high-quality instruction–response pairs (SFT format)
+- [x] Project structure & schema defined
+- [x] Persian normalization script
+- [x] Basic PDF extraction script
+- [ ] Collect and clean secondary school textbooks
+- [ ] Collect Konkur / Tizhooshan / Olympiad questions
+- [ ] Build high-quality instruction–response pairs
 
 ### Phase 1 — Base Fine-Tuning
 - Select base model (priority: Qwen2.5 / Qwen3 7B–14B)
 - Fine-tune with QLoRA + Unsloth
 - Evaluate on real Konkur questions
-- Iterate on data quality and training recipes
 
 ### Phase 2 — Agentic Layer
 - Specialized agents (Teacher, Solver, Exam Designer, Grader, Advisor)
-- Long-term student memory system
-- Tool use and structured output
+- Long-term student memory
 
 ### Phase 3 — Product
-- Clean web + mobile interface
-- Offline (GGUF) + online versions
-- Progress tracking and reporting dashboard
+- Web + offline (GGUF) interfaces
+- Progress tracking
 
-See full details in [`docs/ROADMAP.md`](docs/ROADMAP.md).
+Full details → [`docs/ROADMAP.md`](docs/ROADMAP.md)
 
 ---
 
@@ -55,35 +54,39 @@ See full details in [`docs/ROADMAP.md`](docs/ROADMAP.md).
 ```
 nova-edu/
 ├── data/
-│   └── SCHEMA.md              # SFT data format & quality rules
+│   ├── SCHEMA.md
+│   ├── PRIORITY_SOURCES.md
+│   └── examples/
+│       └── sample_sft.jsonl
 ├── scripts/
-│   └── normalize_persian.py   # Persian text normalization
-├── training/                  # Training configs (coming)
+│   ├── normalize_persian.py
+│   └── extract_pdf_text.py
+├── training/
+│   └── README.md
 ├── agents/
-│   └── SYSTEM_PROMPTS.md      # Core + specialized agent prompts
-├── evaluation/                # Benchmarks (coming)
+│   └── SYSTEM_PROMPTS.md
 ├── docs/
 │   └── ROADMAP.md
+├── requirements.txt
 ├── CONTRIBUTING.md
 └── README.md
 ```
 
 ---
 
-## Getting Started
+## Quick Start
 
 ```bash
 git clone https://github.com/sinajr2011-prog/nova-edu.git
 cd nova-edu
+pip install -r requirements.txt
 ```
-
-More setup and training instructions will be added as Phase 0 progresses.
 
 ---
 
 ## Contributing
 
-This is an open project. Clean datasets, evaluation ideas, training improvements, and agent designs are all welcome.  
+Clean data, better extraction, evaluation sets, and training ideas are all welcome.  
 See [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
 ---
