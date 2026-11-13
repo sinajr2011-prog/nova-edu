@@ -1,42 +1,51 @@
 # Nova-Edu Development Roadmap
 
-## Phase 0 — Data Foundation + Multimodal Foundation (Current)
+## Phase 0 — Foundation (Mostly Complete)
 
-### Text / LLM side
-- [x] Core tooling (normalization, extraction, chunking, SFT tools)
-- [x] Grade 9 samples + curriculum slices
-- [ ] Real textbook ingestion at scale
-- [ ] First experimental fine-tune
+### Text & Data
+- [x] Data pipeline tools
+- [x] Curriculum slices + samples
+- [x] Training template
 
-### Multimodal side (New)
-- [x] Multimodal module structure
-- [x] Educational image prompt templates
-- [x] Educational video prompt templates
-- [x] Visual Explainer agent definition
-- [ ] Integration layer with image/video models
-- [ ] Prompt optimization & evaluation for educational quality
-- [ ] First visual generation pipeline
+### Multimodal
+- [x] Image + Video clients
+- [x] Educational helpers + MultimodalService
+- [x] Visual Explainer
 
----
-
-## Phase 1 — Strong Base Models
-
-- Fine-tuned educational LLM (Qwen-based)
-- Reliable image generation pipeline (Flux / SD3.5 / others)
-- Early video generation experiments
+### Agents & Features (Designed)
+- [x] Mistake Finder
+- [x] Question Designer
+- [x] Teacher Styles
+- [x] Long-term Student Memory design
+- [x] Konkur Simulation mode
+- [x] Night Before Exam mode
+- [x] Smart Flashcards
+- [x] Step-by-step Visual Solutions
 
 ---
 
-## Phase 2 — Agentic + Multimodal System
+## Phase 1 — Implementation Priority
 
-- Full multi-agent system (Text + Visual)
-- Student memory
-- Coordinated text + image/video explanations
+1. Wire agents together with real LLM calls
+2. Implement Student Memory store
+3. Connect Visual Explainer to MultimodalService
+4. Build first working Mistake Finder + Question Designer loop
+5. First real fine-tune on Grade 9 data
 
 ---
 
-## Phase 3 — Product
+## Phase 2 — Advanced Product Features
 
-- Unified interface
-- Offline support where possible
-- Progress tracking
+- Full Konkur Simulation
+- Spaced repetition flashcards
+- Competition mode
+- Learning path recommender
+- Self-improvement loop
+
+---
+
+## Phase 3 — Scale & Polish
+
+- Stronger models (including possible Olympiad specialist)
+- Offline support
+- Polished user interface
