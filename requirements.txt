@@ -1,0 +1,21 @@
+# Core
+pypdf>=4.0.0
+python-bidi>=0.4.2
+arabic-reshaper>=3.0.0
+
+# Later for better extraction (optional for now)
+# marker-pdf
+# pymupdf
+
+# Training (Phase 1)
+# torch
+# transformers
+# peft
+# unsloth
+# datasets
+# accelerate
+# bitsandbytes
+
+# Utils
+tqdm
+rich
