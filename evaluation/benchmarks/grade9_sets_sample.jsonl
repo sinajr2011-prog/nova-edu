@@ -1,0 +1,3 @@
+{"id": "sets_001", "question": "اگر A = {۱، ۲، ۳} و B = {۳، ۴} باشد، A ∪ B چیست؟", "answer": "{۱، ۲، ۳، ۴}", "type": "short_answer", "topic": "sets", "difficulty": "easy"}
+{"id": "sets_002", "question": "تفاضل A − B وقتی A = {a, b, c, d} و B = {b, d, e} برابر است با؟", "answer": "{a, c}", "type": "short_answer", "topic": "sets", "difficulty": "easy"}
+{"id": "sets_003", "question": "آیا مجموعه تهی زیرمجموعه هر مجموعه‌ای است؟ توضیح کوتاه بده.", "answer": "بله. مجموعه تهی زیرمجموعه هر مجموعه‌ای است، چون هیچ عضوی ندارد که خارج از آن مجموعه باشد.", "type": "descriptive", "topic": "sets", "difficulty": "medium"}
