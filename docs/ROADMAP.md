@@ -1,42 +1,42 @@
 # Nova-Edu Development Roadmap
 
-## Phase 0 — Data Foundation (Current Focus)
+## Phase 0 — Data Foundation + Multimodal Foundation (Current)
 
-### Completed tooling
-- [x] Project structure & schema
-- [x] Persian normalization
-- [x] PDF extraction
-- [x] Text chunking
-- [x] SFT builder + validator
-- [x] Heuristic chunk → SFT converter
-- [x] Data directory layout + workflow guide
-- [x] Grade 9 Sets & Equations samples + mini eval set
-- [x] Unsloth training template
-- [x] Agent prompts
+### Text / LLM side
+- [x] Core tooling (normalization, extraction, chunking, SFT tools)
+- [x] Grade 9 samples + curriculum slices
+- [ ] Real textbook ingestion at scale
+- [ ] First experimental fine-tune
 
-### Current stage (Real Data Ingestion)
-- [ ] Ingest real Grade 9 Math textbook pages
-- [ ] Clean → chunk → convert to high-quality SFT pairs
-- [ ] Human / strong-model review of generated pairs
-- [ ] Expand evaluation set (more topics + exam style)
-- [ ] First small experimental fine-tune on the new data
+### Multimodal side (New)
+- [x] Multimodal module structure
+- [x] Educational image prompt templates
+- [x] Educational video prompt templates
+- [x] Visual Explainer agent definition
+- [ ] Integration layer with image/video models
+- [ ] Prompt optimization & evaluation for educational quality
+- [ ] First visual generation pipeline
 
 ---
 
-## Phase 1 — Base Fine-Tuning
+## Phase 1 — Strong Base Models
 
-- Qwen2.5-7B / 14B (primary)
-- QLoRA + Unsloth
-- Proper evaluation on held-out questions
+- Fine-tuned educational LLM (Qwen-based)
+- Reliable image generation pipeline (Flux / SD3.5 / others)
+- Early video generation experiments
 
 ---
 
-## Phase 2 — Agentic Layer
+## Phase 2 — Agentic + Multimodal System
 
-Multi-agent system + student memory
+- Full multi-agent system (Text + Visual)
+- Student memory
+- Coordinated text + image/video explanations
 
 ---
 
 ## Phase 3 — Product
 
-Interface + offline support + progress tracking
+- Unified interface
+- Offline support where possible
+- Progress tracking
