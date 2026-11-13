@@ -2,6 +2,11 @@
 pypdf>=4.0.0
 python-bidi>=0.4.2
 arabic-reshaper>=3.0.0
+requests>=2.31.0
+
+# Image generation clients (optional – install what you need)
+# fal-client
+# replicate
 
 # Later for better extraction (optional for now)
 # marker-pdf
