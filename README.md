@@ -16,36 +16,23 @@ Most existing Persian AI projects are either simple chatbots or prompt-engineeri
 - Build a multi-agent system (Concept Teacher, Problem Solver, Exam Designer, Grader, Advisor)
 - Add long-term student memory and progress tracking
 - Support both online and fully offline (GGUF) usage
-- Ultimately become a credible alternative to expensive private tutoring for a large portion of Iranian students
+- Ultimately become a credible alternative to expensive private tutoring
 
 This is not another wrapper. We are modifying the model itself.
 
 ---
 
-## Roadmap
+## Current Progress (Phase 0)
 
-### Phase 0 — Data Foundation (1–2 weeks)
-- [x] Project structure & schema defined
-- [x] Persian normalization script
-- [x] Basic PDF extraction script
-- [ ] Collect and clean secondary school textbooks
-- [ ] Collect Konkur / Tizhooshan / Olympiad questions
-- [ ] Build high-quality instruction–response pairs
-
-### Phase 1 — Base Fine-Tuning
-- Select base model (priority: Qwen2.5 / Qwen3 7B–14B)
-- Fine-tune with QLoRA + Unsloth
-- Evaluate on real Konkur questions
-
-### Phase 2 — Agentic Layer
-- Specialized agents (Teacher, Solver, Exam Designer, Grader, Advisor)
-- Long-term student memory
-
-### Phase 3 — Product
-- Web + offline (GGUF) interfaces
-- Progress tracking
-
-Full details → [`docs/ROADMAP.md`](docs/ROADMAP.md)
+- [x] Full project structure & documentation
+- [x] Persian text normalization
+- [x] PDF text extraction
+- [x] SFT example builder + sample data
+- [x] Grade 9 Math curriculum slice defined
+- [x] Unsloth QLoRA training template
+- [x] Evaluation goals defined
+- [ ] Large-scale clean dataset
+- [ ] First real fine-tune
 
 ---
 
@@ -56,17 +43,24 @@ nova-edu/
 ├── data/
 │   ├── SCHEMA.md
 │   ├── PRIORITY_SOURCES.md
+│   ├── curriculum/
+│   │   └── grade9_math.md
 │   └── examples/
 │       └── sample_sft.jsonl
 ├── scripts/
 │   ├── normalize_persian.py
-│   └── extract_pdf_text.py
+│   ├── extract_pdf_text.py
+│   └── build_sft_example.py
 ├── training/
-│   └── README.md
+│   ├── README.md
+│   └── unsloth_sft_example.py
 ├── agents/
 │   └── SYSTEM_PROMPTS.md
+├── evaluation/
+│   └── README.md
 ├── docs/
 │   └── ROADMAP.md
+├── Makefile
 ├── requirements.txt
 ├── CONTRIBUTING.md
 └── README.md
@@ -80,13 +74,19 @@ nova-edu/
 git clone https://github.com/sinajr2011-prog/nova-edu.git
 cd nova-edu
 pip install -r requirements.txt
+
+# Test normalization
+make normalize
+
+# Generate a demo SFT example
+make demo-sft
 ```
 
 ---
 
 ## Contributing
 
-Clean data, better extraction, evaluation sets, and training ideas are all welcome.  
+Clean educational data, better extraction pipelines, evaluation sets, and training improvements are highly welcome.  
 See [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
 ---
