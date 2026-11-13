@@ -1,4 +1,4 @@
-.PHONY: help install normalize extract demo-sft validate pipeline
+.PHONY: help install normalize extract demo-sft validate pipeline chunk
 
 help:
 	@echo "Nova-Edu development helpers"
@@ -9,6 +9,7 @@ help:
 	@echo "  make demo-sft      Generate a demo SFT example"
 	@echo "  make pipeline      Run normalize → SFT → save demo"
 	@echo "  make validate      Validate sample SFT files"
+	@echo "  make chunk         Show text chunking help"
 
 install:
 	pip install -r requirements.txt
@@ -26,4 +27,7 @@ pipeline:
 	python scripts/pipeline_demo.py
 
 validate:
-	python scripts/validate_sft.py data/examples/sample_sft.jsonl data/examples/sets_grade9.jsonl
+	python scripts/validate_sft.py data/examples/*.jsonl
+
+chunk:
+	python scripts/chunk_text.py --help
