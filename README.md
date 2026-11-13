@@ -46,37 +46,45 @@ This is not another wrapper. We are modifying the model itself.
 - Offline (GGUF) + online versions
 - Progress tracking and reporting dashboard
 
+See full details in [`docs/ROADMAP.md`](docs/ROADMAP.md).
+
 ---
 
 ## Project Structure
 
 ```
 nova-edu/
-├── data/                 # Raw and cleaned datasets
-├── scripts/              # Extraction, cleaning, SFT conversion
-├── training/             # Unsloth / Axolotl / HF configs
-├── agents/               # Multi-agent system
-├── evaluation/           # Benchmarks on real exam questions
-├── app/                  # Future interface
+├── data/
+│   └── SCHEMA.md              # SFT data format & quality rules
+├── scripts/
+│   └── normalize_persian.py   # Persian text normalization
+├── training/                  # Training configs (coming)
+├── agents/
+│   └── SYSTEM_PROMPTS.md      # Core + specialized agent prompts
+├── evaluation/                # Benchmarks (coming)
+├── docs/
+│   └── ROADMAP.md
+├── CONTRIBUTING.md
 └── README.md
 ```
 
 ---
 
-## Getting Started (Coming Soon)
+## Getting Started
 
 ```bash
 git clone https://github.com/sinajr2011-prog/nova-edu.git
 cd nova-edu
 ```
 
-Detailed setup and training instructions will be added as Phase 0 progresses.
+More setup and training instructions will be added as Phase 0 progresses.
 
 ---
 
 ## Contributing
 
-This is an open project. Clean datasets, evaluation ideas, training improvements, and agent designs are all welcome.
+This is an open project. Clean datasets, evaluation ideas, training improvements, and agent designs are all welcome.  
+See [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
 ---
 
