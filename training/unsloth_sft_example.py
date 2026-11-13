@@ -8,6 +8,7 @@ Adjust model name, paths, and hyperparameters as needed.
 
 # pip install unsloth transformers datasets trl peft accelerate bitsandbytes
 
+import torch
 from unsloth import FastLanguageModel
 from datasets import load_dataset
 from trl import SFTTrainer
