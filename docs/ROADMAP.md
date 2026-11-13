@@ -4,69 +4,65 @@
 
 **Goal:** Create a clean, high-quality supervised fine-tuning dataset focused on Iranian secondary education.
 
+### Completed so far
+- [x] Project structure, schema, and documentation
+- [x] Persian text normalization script
+- [x] Basic PDF text extraction
+- [x] SFT example builder
+- [x] Sample SFT data (Grade 9 – Sets)
+- [x] Priority sources & Grade 9 Math curriculum slice defined
+- [x] Unsloth training template
+- [x] Evaluation goals defined
+
+### Still in progress
+- [ ] Large-scale textbook extraction & cleaning
+- [ ] Systematic conversion of textbook content into SFT pairs
+- [ ] Collection of real Konkur / Tizhooshan questions with solutions
+- [ ] First hold-out evaluation set
+
 ### Priority Data Sources
 1. Official secondary school textbooks (Roshd / Ministry of Education)
-   - Mathematics (Grade 9–12)
-   - Physics, Chemistry, Biology
-   - Persian Literature & Arabic (selected chapters)
-2. National University Entrance Exam (Konkur) – all recent years
-3. Tizhooshan (gifted students) entrance exams
-4. Olympiad stage 1 & 2 problems (Math, Physics, Chemistry, Informatics)
+2. National University Entrance Exam (Konkur)
+3. Tizhooshan entrance exams
+4. Olympiad stage 1 & 2 problems
 
 ### Data Pipeline
-1. PDF → text extraction (with layout awareness)
+1. PDF → text extraction
 2. Cleaning & normalization (ZWNJ, punctuation, numbers)
-3. Chunking into pedagogical units (concept explanation, worked example, exercise)
+3. Chunking into pedagogical units
 4. Conversion into instruction-response pairs
-5. Quality filtering + human review samples
-
-### Target Format (SFT)
-```json
-{
-  "messages": [
-    {"role": "system", "content": "You are Nova, an expert Iranian educational tutor..."},
-    {"role": "user", "content": "Explain the concept of ..."},
-    {"role": "assistant", "content": "..."}
-  ],
-  "metadata": {
-    "subject": "math",
-    "grade": 9,
-    "topic": "sets",
-    "source": "textbook",
-    "difficulty": "medium"
-  }
-}
-```
+5. Quality filtering
 
 ---
 
 ## Phase 1 — Base Model Fine-Tuning
 
-- Base model candidates (priority order):
+- Base model candidates:
   1. Qwen2.5-7B-Instruct / Qwen2.5-14B-Instruct
-  2. Qwen3 series (when available and stable)
-  3. Gemma-2-9B / Gemma-3 equivalents
-- Method: QLoRA (4-bit) + Unsloth for speed
-- Evaluation: Hold-out set of real Konkur questions + open-ended concept explanations
+  2. Qwen3 series
+  3. Gemma variants
+- Method: QLoRA (4-bit) + Unsloth
+- Evaluation on real exam questions + pedagogical quality
+
+Template already available in `training/unsloth_sft_example.py`.
 
 ---
 
 ## Phase 2 — Agentic System
 
 Planned agents:
-- **Concept Teacher**: Explains topics step-by-step with examples
-- **Problem Solver**: Solves questions with detailed reasoning
-- **Exam Designer**: Generates new questions of controlled difficulty
-- **Grader**: Evaluates student answers and gives feedback
-- **Advisor**: Tracks long-term progress and recommends next topics
+- Concept Teacher
+- Problem Solver
+- Exam Designer
+- Grader
+- Advisor
 
-Memory: Per-student vector store + summary memory
+Memory: per-student long-term memory
 
 ---
 
 ## Phase 3 — Productization
 
 - Web interface
-- Offline GGUF support
-- Progress dashboard
-- Teacher / parent views (optional)
+- Offline GGUF
+- Progress tracking
