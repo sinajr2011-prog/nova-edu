@@ -1,71 +1,84 @@
-# نِوا | Nova-Edu
+# Nova-Edu
 
-> **اولین مدل زبانی تخصصی آموزش ایران**  
-> The first specialized Iranian educational LLM — textbooks, Konkur, Tizhooshan & Olympiad, with a powerful agentic layer.
+> **The first specialized Iranian educational LLM**  
+> Fine-tuned on Iranian textbooks + Konkur + Tizhooshan + Olympiad, with a powerful agentic layer designed to act as a real private tutor.
 
-**وضعیت:** در حال ساخت (فاز ۰ — آماده‌سازی دیتاست)
-
----
-
-## چشم‌انداز
-
-ساخت قوی‌ترین (یا حداقل جدی‌ترین) فاین‌تیون عمومی موجود مخصوص سیستم آموزشی ایران:
-
-- فاین‌تیون روی کل کتاب‌های درسی متوسطه + سوالات کنکور + تیزهوشان + المپیاد
-- لایه‌ی ایجنتیک قوی (معلم مفهومی، حل‌المسائل، طراح آزمون، مصحح، مشاور)
-- سیستم حافظه بلندمدت برای هر دانش‌آموز
-- قابلیت کار آفلاین + آنلاین
-- هدف نهایی: جایگزینی واقعی معلم خصوصی برای بخش بزرگی از دانش‌آموزان
-
-اکثر پروژه‌های موجود فقط چت‌بات یا پرامپت‌مهندسی‌اند.  
-ما زیرساخت مدل را جدی دستکاری می‌کنیم.
+**Status:** Phase 0 — Dataset Preparation (Active Development)
 
 ---
 
-## فازبندی
+## Vision
 
-### فاز ۰ — آماده‌سازی (۱-۲ هفته)
-- [ ] جمع‌آوری دیتاست کتاب‌های درسی (PDF → متن تمیز)
-- [ ] جمع‌آوری سوالات کنکور و تیزهوشان + پاسخ‌های تشریحی
-- [ ] تمیزکاری، نرمال‌سازی نیم‌فاصله، ساخت جفت‌های instruction-response باکیفیت
+Most existing Persian AI projects are either simple chatbots or prompt-engineering wrappers.  
+**Nova-Edu** aims to go deeper:
 
-### فاز ۱ — فاین‌تیون اولیه
-- انتخاب مدل پایه (اولویت: Qwen2.5 / Qwen3 سری ۷B–۱۴B)
-- فاین‌تیون با QLoRA / Unsloth
-- ارزیابی روی سوالات واقعی کنکور
+- Fine-tune a strong open-weight model on the entire Iranian secondary education curriculum
+- Build a multi-agent system (Concept Teacher, Problem Solver, Exam Designer, Grader, Advisor)
+- Add long-term student memory and progress tracking
+- Support both online and fully offline (GGUF) usage
+- Ultimately become a credible alternative to expensive private tutoring for a large portion of Iranian students
 
-### فاز ۲ — لایه‌ی ایجنتیک
-- ایجنت‌های تخصصی (معلم، طراح سوال، مصحح، مشاور)
-- سیستم حافظه بلندمدت دانش‌آموز
-
-### فاز ۳ — محصول
-- رابط کاربری قوی
-- نسخه آفلاین (GGUF) + آنلاین
-- سیستم پیشرفت و گزارش‌گیری
+This is not another wrapper. We are modifying the model itself.
 
 ---
 
-## ساختار پروژه (در حال رشد)
+## Roadmap
+
+### Phase 0 — Data Foundation (1–2 weeks)
+- [ ] Collect and clean secondary school textbooks (PDF → high-quality text)
+- [ ] Collect Konkur, Tizhooshan, and Olympiad questions with detailed solutions
+- [ ] Normalize Persian text (ZWNJ, punctuation, consistency)
+- [ ] Build high-quality instruction–response pairs (SFT format)
+
+### Phase 1 — Base Fine-Tuning
+- Select base model (priority: Qwen2.5 / Qwen3 7B–14B)
+- Fine-tune with QLoRA + Unsloth
+- Evaluate on real Konkur questions
+- Iterate on data quality and training recipes
+
+### Phase 2 — Agentic Layer
+- Specialized agents (Teacher, Solver, Exam Designer, Grader, Advisor)
+- Long-term student memory system
+- Tool use and structured output
+
+### Phase 3 — Product
+- Clean web + mobile interface
+- Offline (GGUF) + online versions
+- Progress tracking and reporting dashboard
+
+---
+
+## Project Structure
 
 ```
 nova-edu/
-├── data/                 # دیتاست‌های خام و تمیزشده
-├── scripts/              # استخراج، تمیزکاری، تبدیل به SFT
-├── training/             # کانفیگ‌های Unsloth / Axolotl / HF
-├── agents/               # لایه‌ی ایجنتیک
-├── evaluation/           # بنچمارک روی سوالات واقعی
-├── app/                  # رابط کاربری (بعداً)
+├── data/                 # Raw and cleaned datasets
+├── scripts/              # Extraction, cleaning, SFT conversion
+├── training/             # Unsloth / Axolotl / HF configs
+├── agents/               # Multi-agent system
+├── evaluation/           # Benchmarks on real exam questions
+├── app/                  # Future interface
 └── README.md
 ```
 
 ---
 
-## مشارکت
+## Getting Started (Coming Soon)
 
-این پروژه اوپن‌سورس و عمومی است.  
-اگر ایده، دیتاست تمیز، یا کمک فنی داری، خوشحال می‌شیم.
+```bash
+git clone https://github.com/sinajr2011-prog/nova-edu.git
+cd nova-edu
+```
+
+Detailed setup and training instructions will be added as Phase 0 progresses.
 
 ---
 
-**ساخته‌شده با 🔥 توسط [Sina Jafari](https://github.com/sinajr2011-prog)**  
-ایده اولیه: نوامبر ۲۰۲۶
+## Contributing
+
+This is an open project. Clean datasets, evaluation ideas, training improvements, and agent designs are all welcome.
+
+---
+
+**Built with fire by [Sina Jafari](https://github.com/sinajr2011-prog)**  
+Started: November 2026
