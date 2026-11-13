@@ -27,10 +27,12 @@ This is not another wrapper. We are modifying the model itself.
 - [x] Full project structure & documentation
 - [x] Persian text normalization
 - [x] PDF text extraction
-- [x] SFT example builder + sample data
-- [x] Grade 9 Math curriculum slice defined
+- [x] SFT example builder + validation
+- [x] Pipeline demo (normalize → SFT)
+- [x] Grade 9 Math curriculum slice + sample data
 - [x] Unsloth QLoRA training template
 - [x] Evaluation goals defined
+- [x] Specialized agent prompts drafted
 - [ ] Large-scale clean dataset
 - [ ] First real fine-tune
 
@@ -46,11 +48,14 @@ nova-edu/
 │   ├── curriculum/
 │   │   └── grade9_math.md
 │   └── examples/
-│       └── sample_sft.jsonl
+│       ├── sample_sft.jsonl
+│       └── sets_grade9.jsonl
 ├── scripts/
 │   ├── normalize_persian.py
 │   ├── extract_pdf_text.py
-│   └── build_sft_example.py
+│   ├── build_sft_example.py
+│   ├── validate_sft.py
+│   └── pipeline_demo.py
 ├── training/
 │   ├── README.md
 │   └── unsloth_sft_example.py
@@ -75,11 +80,9 @@ git clone https://github.com/sinajr2011-prog/nova-edu.git
 cd nova-edu
 pip install -r requirements.txt
 
-# Test normalization
-make normalize
-
-# Generate a demo SFT example
-make demo-sft
+make normalize      # test normalization
+make pipeline       # full demo: normalize → SFT
+make validate       # validate sample data
 ```
 
 ---
