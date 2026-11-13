@@ -1,40 +1,62 @@
 # Multimodal Generation — Nova-Edu
 
-Nova is not only a text tutor.  
-It also needs strong **image** and **video** generation capabilities to explain concepts visually.
+Nova supports educational **image** and **video** generation.
 
-## Goals
+## Structure
 
-- Generate clear educational diagrams (sets, equations, geometry, physics, chemistry…)
-- Create step-by-step visual explanations
-- Produce short educational animations / concept videos
-- Keep everything pedagogically useful and consistent with Iranian curriculum style
+```
+multimodal/
+├── image_client.py          # Low-level image backends (fal, Replicate)
+├── video_client.py          # Low-level video backends (fal)
+├── educational_image.py     # Educational image helper
+├── educational_video.py     # Educational video helper
+├── service.py               # Unified service for agents
+├── prompts/
+│   ├── image_prompts.md
+│   └── video_prompts.md
+├── USAGE.md
+└── integration.md
+```
 
-## Planned Capabilities
+## Quick Usage
 
-### 1. Image Generation
-- Concept diagrams
-- Geometric figures
-- Step-by-step solution illustrations
-- Illustrated examples and analogies
+### Image
 
-### 2. Video Generation
-- Short concept animations (10–30 seconds)
-- Step-by-step solution walkthroughs
-- Process visualizations (e.g. chemical reactions, physical motions)
+```python
+from multimodal.service import get_multimodal_service
 
-## Architecture Direction
+service = get_multimodal_service()
+service.create_diagram(
+    concept="Venn diagram of two sets A and B",
+    output_path="outputs/venn.png",
+    extra="textbook style, clear labels"
+)
+```
 
-We will **not** train foundation image/video models from scratch in the beginning.
+### Video
 
-Instead:
+```python
+service.create_animation(
+    concept="intersection of two sets",
+    output_path="outputs/venn.mp4",
+    duration=5
+)
+```
 
-1. Design strong educational prompt systems and agents
-2. Integrate with the best available open/closed models (Flux, SD3.5, Kling, Luma, Runway, Hunyuan, etc.)
-3. Later: collect educational visual data and fine-tune / adapt models for Persian educational style and curriculum accuracy
+## Setup
 
-## Current Status
+```bash
+export FAL_KEY="your_key"          # recommended
+# or
+export REPLICATE_API_TOKEN="..."
 
-- Structure created
-- Prompt templates and agent roles being defined
-- Integration layer coming next
+pip install fal-client requests
+# optional: pip install replicate
+```
+
+## Design Principles
+
+- Pedagogical clarity > visual beauty
+- Clean textbook-like style preferred for diagrams
+- Short and focused videos
+- Agents should use `MultimodalService`, not call backends directly
