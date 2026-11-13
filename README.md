@@ -1,36 +1,51 @@
 # Nova-Edu
 
-> **The first specialized Iranian educational LLM**  
-> Fine-tuned on Iranian textbooks + Konkur + Tizhooshan + Olympiad, with a powerful agentic layer designed to act as a real private tutor.
+> **The first specialized Iranian educational LLM + Visual Tutor**  
+> Text + Image + Video generation focused on Iranian curriculum, Konkur, Tizhooshan and Olympiad.
 
-**Status:** Phase 0 — Real Data Ingestion (Active)
+**Status:** Phase 0 — Data + Multimodal Foundation (Active)
 
 ---
 
 ## Vision
 
-Most existing Persian AI projects are either simple chatbots or prompt-engineering wrappers.  
-**Nova-Edu** aims to go deeper:
+Nova is designed to be a real educational companion, not just a chatbot:
 
-- Fine-tune a strong open-weight model on the entire Iranian secondary education curriculum
-- Build a multi-agent system (Concept Teacher, Problem Solver, Exam Designer, Grader, Advisor)
-- Add long-term student memory and progress tracking
-- Support both online and fully offline (GGUF) usage
-
-This is not another wrapper. We are modifying the model itself.
+- Deep understanding of Iranian secondary school curriculum
+- Strong reasoning and explanation ability (fine-tuned LLM)
+- Clear educational **image** generation (diagrams, illustrations, step-by-step visuals)
+- Short educational **video** generation (concept animations & solution walkthroughs)
+- Multi-agent system (Teacher, Solver, Visual Explainer, Grader, Advisor…)
 
 ---
 
-## Current Stage
+## Current Focus
 
-Tooling for Phase 0 is ready. We are now in the **real data ingestion** stage:
+### Text Side
+- Data pipeline ready
+- Moving toward real textbook ingestion and first fine-tune
 
-1. Extract real textbook content (start with Grade 9 Math)
-2. Clean → Chunk → Convert to high-quality SFT pairs
-3. Review and expand evaluation sets
-4. Run the first experimental fine-tune
+### Multimodal Side (Just started)
+- Image & Video prompt systems
+- Visual Explainer agent
+- Integration layer coming next
 
-See `data/README.md` for the recommended data workflow.
+---
+
+## Project Structure
+
+```
+nova-edu/
+├── data/                 # Educational text data
+├── scripts/              # Text processing tools
+├── training/             # LLM fine-tuning
+├── agents/               # Text + Visual agents
+├── multimodal/           # Image & Video generation
+│   ├── prompts/
+│   └── README.md
+├── evaluation/
+└── docs/
+```
 
 ---
 
@@ -40,21 +55,7 @@ See `data/README.md` for the recommended data workflow.
 git clone https://github.com/sinajr2011-prog/nova-edu.git
 cd nova-edu
 pip install -r requirements.txt
-
-make normalize
-make pipeline
-make validate
 ```
-
----
-
-## Key Folders
-
-- `data/` — curriculum, examples, and data workflow
-- `scripts/` — extraction, normalization, chunking, SFT tools
-- `training/` — Unsloth QLoRA template
-- `agents/` — system prompts
-- `evaluation/` — benchmarks
 
 ---
 
