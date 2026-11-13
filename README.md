@@ -22,54 +22,21 @@ This is not another wrapper. We are modifying the model itself.
 
 ---
 
-## Current Progress (Phase 0)
+## Current Progress
 
-- [x] Full project structure & documentation
-- [x] Persian text normalization
-- [x] PDF text extraction
-- [x] SFT example builder + validation
-- [x] Pipeline demo (normalize → SFT)
-- [x] Grade 9 Math curriculum slice + sample data
-- [x] Unsloth QLoRA training template
-- [x] Evaluation goals defined
-- [x] Specialized agent prompts drafted
-- [ ] Large-scale clean dataset
-- [ ] First real fine-tune
+### Done
+- Project structure, schema, normalization, PDF extraction, chunking
+- SFT tools (builder + validator + pipeline demo)
+- Grade 9 Sets + Equations curriculum slices and sample data
+- Mini evaluation set for Sets
+- Unsloth QLoRA training template
+- Agent system prompts
 
----
-
-## Project Structure
-
-```
-nova-edu/
-├── data/
-│   ├── SCHEMA.md
-│   ├── PRIORITY_SOURCES.md
-│   ├── curriculum/
-│   │   └── grade9_math.md
-│   └── examples/
-│       ├── sample_sft.jsonl
-│       └── sets_grade9.jsonl
-├── scripts/
-│   ├── normalize_persian.py
-│   ├── extract_pdf_text.py
-│   ├── build_sft_example.py
-│   ├── validate_sft.py
-│   └── pipeline_demo.py
-├── training/
-│   ├── README.md
-│   └── unsloth_sft_example.py
-├── agents/
-│   └── SYSTEM_PROMPTS.md
-├── evaluation/
-│   └── README.md
-├── docs/
-│   └── ROADMAP.md
-├── Makefile
-├── requirements.txt
-├── CONTRIBUTING.md
-└── README.md
-```
+### Next
+- Scale real textbook extraction (start with Grade 9 Math)
+- Convert clean text into high-quality SFT pairs at volume
+- Expand evaluation coverage
+- First experimental fine-tune
 
 ---
 
@@ -80,17 +47,41 @@ git clone https://github.com/sinajr2011-prog/nova-edu.git
 cd nova-edu
 pip install -r requirements.txt
 
-make normalize      # test normalization
-make pipeline       # full demo: normalize → SFT
-make validate       # validate sample data
+make normalize
+make pipeline
+make validate
 ```
 
 ---
 
-## Contributing
+## Project Structure
 
-Clean educational data, better extraction pipelines, evaluation sets, and training improvements are highly welcome.  
-See [`CONTRIBUTING.md`](CONTRIBUTING.md).
+```
+nova-edu/
+├── data/
+│   ├── curriculum/
+│   │   ├── grade9_math.md
+│   │   └── grade9_math_equations.md
+│   └── examples/
+│       ├── sets_grade9.jsonl
+│       └── equations_grade9.jsonl
+├── scripts/
+│   ├── normalize_persian.py
+│   ├── extract_pdf_text.py
+│   ├── chunk_text.py
+│   ├── build_sft_example.py
+│   ├── validate_sft.py
+│   └── pipeline_demo.py
+├── training/
+│   └── unsloth_sft_example.py
+├── agents/
+│   └── SYSTEM_PROMPTS.md
+├── evaluation/
+│   └── benchmarks/
+├── docs/
+│   └── ROADMAP.md
+└── ...
+```
 
 ---
 
