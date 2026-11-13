@@ -3,7 +3,7 @@
 > **The first specialized Iranian educational LLM**  
 > Fine-tuned on Iranian textbooks + Konkur + Tizhooshan + Olympiad, with a powerful agentic layer designed to act as a real private tutor.
 
-**Status:** Phase 0 — Dataset Preparation (Active Development)
+**Status:** Phase 0 — Real Data Ingestion (Active)
 
 ---
 
@@ -16,27 +16,21 @@ Most existing Persian AI projects are either simple chatbots or prompt-engineeri
 - Build a multi-agent system (Concept Teacher, Problem Solver, Exam Designer, Grader, Advisor)
 - Add long-term student memory and progress tracking
 - Support both online and fully offline (GGUF) usage
-- Ultimately become a credible alternative to expensive private tutoring
 
 This is not another wrapper. We are modifying the model itself.
 
 ---
 
-## Current Progress
+## Current Stage
 
-### Done
-- Project structure, schema, normalization, PDF extraction, chunking
-- SFT tools (builder + validator + pipeline demo)
-- Grade 9 Sets + Equations curriculum slices and sample data
-- Mini evaluation set for Sets
-- Unsloth QLoRA training template
-- Agent system prompts
+Tooling for Phase 0 is ready. We are now in the **real data ingestion** stage:
 
-### Next
-- Scale real textbook extraction (start with Grade 9 Math)
-- Convert clean text into high-quality SFT pairs at volume
-- Expand evaluation coverage
-- First experimental fine-tune
+1. Extract real textbook content (start with Grade 9 Math)
+2. Clean → Chunk → Convert to high-quality SFT pairs
+3. Review and expand evaluation sets
+4. Run the first experimental fine-tune
+
+See `data/README.md` for the recommended data workflow.
 
 ---
 
@@ -54,34 +48,13 @@ make validate
 
 ---
 
-## Project Structure
+## Key Folders
 
-```
-nova-edu/
-├── data/
-│   ├── curriculum/
-│   │   ├── grade9_math.md
-│   │   └── grade9_math_equations.md
-│   └── examples/
-│       ├── sets_grade9.jsonl
-│       └── equations_grade9.jsonl
-├── scripts/
-│   ├── normalize_persian.py
-│   ├── extract_pdf_text.py
-│   ├── chunk_text.py
-│   ├── build_sft_example.py
-│   ├── validate_sft.py
-│   └── pipeline_demo.py
-├── training/
-│   └── unsloth_sft_example.py
-├── agents/
-│   └── SYSTEM_PROMPTS.md
-├── evaluation/
-│   └── benchmarks/
-├── docs/
-│   └── ROADMAP.md
-└── ...
-```
+- `data/` — curriculum, examples, and data workflow
+- `scripts/` — extraction, normalization, chunking, SFT tools
+- `training/` — Unsloth QLoRA template
+- `agents/` — system prompts
+- `evaluation/` — benchmarks
 
 ---
 
