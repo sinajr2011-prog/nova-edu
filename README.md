@@ -1,103 +1,83 @@
 # Nova-Edu
 
 > **The first specialized Iranian educational LLM + Visual + Multi-Agent Tutor**  
-> Text + Image + Video + Memory + Agents focused on Iranian curriculum, Konkur, Tizhooshan and Olympiad.
+> Built to power learning platforms, not just chat.
 
-**Status:** Core system is live and detonated 🔥
-
----
-
-## What just exploded
-
-### 1. Real LLM Connection (`core/llm.py`)
-- Works with **OpenRouter / OpenAI / Qwen / any OpenAI-compatible API**
-- Automatic fallback to fake LLM for demos when no key is present
-
-### 2. Full Gradio UI (`app/ui.py`)
-Three powerful tabs:
-- **Mistake Finder + Targeted Practice** (the magic loop)
-- **Question Designer**
-- **Student Memory Viewer**
-
-### 3. Multi-Agent Brain (`core/agents.py`)
-- Mistake Finder
-- Question Designer
-- Visual Explainer
-- Teacher styles (kind / strict / konkur / deep)
-- Full `mistake_to_practice()` orchestration
-
-### 4. Long-term Memory (`core/memory_store.py`)
-Tracks strengths, weaknesses, mistakes, mastery scores, and recommends focus topics.
+**Status:** Core engine + Platform API are live 🔥
 
 ---
 
-## Quick Start
+## What Nova is now
 
+- Multi-agent educational brain (Mistake Finder, Question Designer, Memory, Visual)
+- Real LLM connection (OpenRouter / Qwen / OpenAI-compatible)
+- Gradio UI for direct use
+- **REST API for integration into educational platforms**
+
+---
+
+## Run options
+
+### 1) Local UI
 ```bash
-git clone https://github.com/sinajr2011-prog/nova-edu.git
-cd nova-edu
 pip install -r requirements.txt
-
-# Optional: real model
-export OPENROUTER_API_KEY="your_key"
-export NOVA_MODEL="qwen/qwen2.5-14b-instruct"
-
-# Run the UI
 python app/ui.py
 ```
 
-Then open `http://localhost:7860`
+### 2) Platform API
+```bash
+uvicorn api.main:app --host 0.0.0.0 --port 8000 --reload
+```
+Open docs: `http://localhost:8000/docs`
 
-### Or run the terminal demo
+### 3) Terminal demo
 ```bash
 python -m core.demo_loop
 ```
 
 ---
 
-## The Magic Loop
+## Platform Integration
 
-```
-Student wrong solution
-        ↓
-Mistake Finder (analyzes exact error)
-        ↓
-Student Memory (logs weakness + mastery)
-        ↓
-Question Designer (creates targeted practice)
-```
+Any learning product can call Nova:
 
-All wired and working.
+| Endpoint | Use case |
+|----------|----------|
+| `POST /v1/mistake-analysis` | Analyze student work + generate practice |
+| `POST /v1/generate-questions` | Create targeted questions |
+| `POST /v1/tutor-chat` | In-app tutor |
+| `GET /v1/students/{id}/memory` | Personalization data |
 
----
-
-## Project Structure
-
-```
-nova-edu/
-├── core/
-│   ├── llm.py              # Real LLM client
-│   ├── memory_store.py     # Long-term memory
-│   ├── agents.py           # Multi-agent system
-│   └── demo_loop.py
-├── app/
-│   └── ui.py               # Gradio interface 🔥
-├── multimodal/             # Image + Video
-├── agents/ modes/ features/
-├── data/ training/ docs/
-└── requirements.txt
-```
+Guides:
+- `api/README.md`
+- `integrations/README.md`
+- `integrations/kharazmika_adapter.md`
 
 ---
 
-## Environment Variables
+## Core architecture
 
-| Variable | Description |
-|----------|-------------|
-| `OPENROUTER_API_KEY` or `OPENAI_API_KEY` | API key |
-| `OPENAI_BASE_URL` | Default: `https://openrouter.ai/api/v1` |
-| `NOVA_MODEL` | Default: `qwen/qwen2.5-14b-instruct` |
-| `FAL_KEY` | For image/video generation |
+```
+Educational Platform (Kharazmika / LMS / App)
+                ↓ REST
+           Nova API layer
+                ↓
+     Agents + Memory + LLM + Multimodal
+```
+
+Nova = intelligence engine  
+Platform = student experience
+
+---
+
+## Environment
+
+```bash
+export OPENROUTER_API_KEY="..."
+export NOVA_MODEL="qwen/qwen2.5-14b-instruct"
+# optional image/video
+export FAL_KEY="..."
+```
 
 ---
 
