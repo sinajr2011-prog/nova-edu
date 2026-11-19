@@ -1,52 +1,49 @@
 # Nova-Edu
 
 > **The first specialized Iranian educational LLM + Visual Tutor**  
-> Text + Image + Video generation focused on Iranian curriculum, Konkur, Tizhooshan and Olympiad.
+> Text + Image + Video + Multi-Agent system focused on Iranian curriculum, Konkur, Tizhooshan and Olympiad.
 
-**Status:** Phase 0 — Data + Multimodal Foundation (Active)
-
----
-
-## Vision
-
-Nova is designed to be a real educational companion:
-
-- Deep understanding of Iranian secondary school curriculum
-- Strong reasoning and explanation ability (fine-tuned LLM)
-- Clear educational **image** generation (diagrams, illustrations)
-- Short educational **video** generation (concept animations)
-- Multi-agent system (Teacher, Solver, Visual Explainer, Grader, Advisor…)
+**Status:** Core Intelligence Layer is live 🔥
 
 ---
 
-## Current Capabilities
+## What's Cool Right Now
 
-### Text
-- Data pipeline (extract → normalize → chunk → SFT)
-- Curriculum slices (Grade 9 Sets & Equations)
-- Training template (Unsloth QLoRA)
+### 1. Student Memory (`core/memory_store.py`)
+Long-term memory per student:
+- Strengths & weaknesses
+- Mistake history
+- Topic mastery scores (with EMA)
+- Smart focus topic recommendation
 
-### Multimodal
-- Image generation client (fal / Replicate + Flux)
-- Video generation client (initial fal support)
-- Educational helpers + unified `MultimodalService`
-- Visual Explainer agent definition
+### 2. Multi-Agent System (`core/agents.py`)
+- **Mistake Finder** → finds the exact error and explains it
+- **Question Designer** → generates targeted practice from that mistake
+- **Visual Explainer** → connected to image/video generation
+- **Teacher Styles** → مهربون / سرسخت / کنکوری / مفهومی
+
+### 3. The Magic Loop
+```
+Student mistake → Mistake Finder → Memory update → Targeted questions
+```
+Fully implemented in `NovaOrchestrator.mistake_to_practice()`
+
+### 4. Multimodal
+Image + Video generation ready (`multimodal/`)
 
 ---
 
-## Quick Start
+## Quick Demo
 
 ```bash
-git clone https://github.com/sinajr2011-prog/nova-edu.git
-cd nova-edu
-pip install -r requirements.txt
+python -m core.demo_loop
 ```
 
-For image generation:
-```bash
-export FAL_KEY="your_key"
-pip install fal-client
-```
+This runs a full fake example:
+- Student solves an equation wrong
+- Nova finds the mistake
+- Updates memory
+- Generates new practice questions
 
 ---
 
@@ -54,14 +51,27 @@ pip install fal-client
 
 ```
 nova-edu/
+├── core/
+│   ├── memory_store.py      # Long-term student memory
+│   ├── agents.py            # All agents + orchestrator
+│   └── demo_loop.py         # Full working demo
+├── multimodal/              # Image + Video generation
+├── agents/                  # Agent design docs
+├── memory/                  # Memory design docs
+├── modes/                   # Konkur sim, Night-before-exam...
 ├── data/
-├── scripts/
 ├── training/
-├── agents/
-├── multimodal/          # Image + Video
-├── evaluation/
 └── docs/
 ```
+
+---
+
+## Next Power Moves
+
+1. Plug a real LLM (Qwen / OpenAI / local) into `llm_call`
+2. Connect Visual Explainer to real image generation in the loop
+3. Build a simple web UI around the orchestrator
+4. Start fine-tuning on real Grade 9 data
 
 ---
 
