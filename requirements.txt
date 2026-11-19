@@ -5,6 +5,9 @@ arabic-reshaper>=3.0.0
 requests>=2.31.0
 openai>=1.40.0
 gradio>=4.44.0
+fastapi>=0.115.0
+uvicorn>=0.30.0
+pydantic>=2.8.0
 
 # Image generation clients (optional)
 # fal-client
