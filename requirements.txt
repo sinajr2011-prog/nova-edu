@@ -3,14 +3,12 @@ pypdf>=4.0.0
 python-bidi>=0.4.2
 arabic-reshaper>=3.0.0
 requests>=2.31.0
+openai>=1.40.0
+gradio>=4.44.0
 
-# Image generation clients (optional – install what you need)
+# Image generation clients (optional)
 # fal-client
 # replicate
-
-# Later for better extraction (optional for now)
-# marker-pdf
-# pymupdf
 
 # Training (Phase 1)
 # torch
