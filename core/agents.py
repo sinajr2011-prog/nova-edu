@@ -1,0 +1,252 @@
+#!/usr/bin/env python3
+"""
+Nova Agent System — core orchestration.
+
+This module defines the main agents and a simple runner that can
+coordinate Mistake Finder → Question Designer loops, and more.
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass, field
+from typing import Any, Optional
+
+from core.memory_store import StudentMemory
+
+
+# ---------------------------------------------------------------------------
+# Prompt building blocks
+# ---------------------------------------------------------------------------
+
+BASE_PERSONA = (
+    "You are Nova, an expert Iranian educational tutor for secondary school, "
+    "Konkur, Tizhooshan and Olympiad. Always answer in clear Persian with proper نیم‌فاصله. "
+    "Be precise, pedagogical, and never invent curriculum facts."
+)
+
+STYLES = {
+    "kind": "سبک: مهربون، تشویق‌کننده و صبور باش.",
+    "strict": "سبک: مستقیم، جدی و دقیق باش. نقاط ضعف را واضح بگو.",
+    "konkur": "سبک: کنکوری، سریع، نکته‌ای و متمرکز روی دام‌ها و تست.",
+    "deep": "سبک: مفهومی و عمیق. روی چرایی‌ها تمرکز کن.",
+}
+
+
+def style_prefix(style: str = "kind") -> str:
+    return STYLES.get(style, STYLES["kind"])
+
+
+# ---------------------------------------------------------------------------
+# Agent outputs
+# ---------------------------------------------------------------------------
+
+@dataclass
+class MistakeReport:
+    error_location: str
+    error_type: str
+    explanation: str
+    correct_solution: str
+    key_lesson: str
+    topic: str = "general"
+
+    def to_prompt_block(self) -> str:
+        return (
+            f"نقطه اشتباه: {self.error_location}\n"
+            f"نوع اشتباه: {self.error_type}\n"
+            f"توضیح: {self.explanation}\n"
+            f"راه‌حل صحیح:\n{self.correct_solution}\n"
+            f"درس کلیدی: {self.key_lesson}"
+        )
+
+
+@dataclass
+class GeneratedQuestion:
+    question: str
+    answer: str
+    solution: str
+    difficulty: str
+    topic: str
+    question_type: str = "short_answer"
+
+
+# ---------------------------------------------------------------------------
+# Agents (LLM-agnostic interface)
+# ---------------------------------------------------------------------------
+
+class BaseAgent:
+    """
+    All agents only build prompts / structure data.
+    The actual LLM call is injected from outside (so we stay flexible).
+    """
+
+    def __init__(self, llm_call):
+        """
+        llm_call: a function (system: str, user: str) -> str
+        """
+        self.llm = llm_call
+
+
+class MistakeFinderAgent(BaseAgent):
+    def analyze(
+        self,
+        problem: str,
+        student_solution: str,
+        topic: str = "general",
+        style: str = "kind",
+    ) -> MistakeReport:
+        system = f"{BASE_PERSONA}\n{style_prefix(style)}\n\nYou are the Mistake Finder agent."
+        user = f"""صورت مسئله:
+{problem}
+
+راه‌حل دانش‌آموز:
+{student_solution}
+
+خروجی را دقیقاً با این ساختار بده:
+نقطه اشتباه:
+نوع اشتباه:
+توضیح اشتباه:
+راه‌حل صحیح:
+درس کلیدی:
+"""
+        raw = self.llm(system, user)
+        return self._parse(raw, topic)
+
+    def _parse(self, raw: str, topic: str) -> MistakeReport:
+        # Simple robust parser
+        def extract(label: str) -> str:
+            import re
+            m = re.search(rf"{label}:\s*(.*?)(?=\n(?:نقطه|نوع|توضیح|راه‌حل|درس)|$)", raw, re.S)
+            return m.group(1).strip() if m else raw.strip()
+
+        return MistakeReport(
+            error_location=extract("نقطه اشتباه"),
+            error_type=extract("نوع اشتباه"),
+            explanation=extract("توضیح اشتباه"),
+            correct_solution=extract("راه‌حل صحیح"),
+            key_lesson=extract("درس کلیدی"),
+            topic=topic,
+        )
+
+
+class QuestionDesignerAgent(BaseAgent):
+    def generate(
+        self,
+        topic: str,
+        difficulty: str = "medium",
+        based_on_mistake: Optional[MistakeReport] = None,
+        count: int = 1,
+        style: str = "kind",
+    ) -> list[GeneratedQuestion]:
+        system = f"{BASE_PERSONA}\n{style_prefix(style)}\n\nYou are the Question Designer agent."
+
+        extra = ""
+        if based_on_mistake:
+            extra = f"\nاین سوال باید روی ضعفی که در این اشتباه دیده شده تمرکز کند:\n{based_on_mistake.to_prompt_block()}"
+
+        user = f"""یک سوال {difficulty} در موضوع «{topic}» طراحی کن.{extra}
+
+خروجی را دقیقاً با این ساختار بده:
+سوال:
+پاسخ نهایی:
+راه‌حل کامل:
+"""
+        questions = []
+        for _ in range(count):
+            raw = self.llm(system, user)
+            questions.append(self._parse(raw, topic, difficulty))
+        return questions
+
+    def _parse(self, raw: str, topic: str, difficulty: str) -> GeneratedQuestion:
+        import re
+
+        def extract(label: str) -> str:
+            m = re.search(rf"{label}:\s*(.*?)(?=\n(?:سوال|پاسخ|راه‌حل)|$)", raw, re.S)
+            return m.group(1).strip() if m else raw.strip()
+
+        return GeneratedQuestion(
+            question=extract("سوال"),
+            answer=extract("پاسخ نهایی"),
+            solution=extract("راه‌حل کامل"),
+            difficulty=difficulty,
+            topic=topic,
+        )
+
+
+class VisualExplainerAgent(BaseAgent):
+    """Connects to MultimodalService."""
+
+    def __init__(self, llm_call, multimodal_service=None):
+        super().__init__(llm_call)
+        self.mm = multimodal_service
+
+    def create_diagram(self, concept: str, output_path: str, extra: str = "") -> str:
+        if self.mm is None:
+            raise RuntimeError("MultimodalService not attached")
+        path = self.mm.create_diagram(concept=concept, output_path=output_path, extra=extra)
+        return str(path)
+
+    def create_animation(self, concept: str, output_path: str, duration: int = 5) -> str:
+        if self.mm is None:
+            raise RuntimeError("MultimodalService not attached")
+        path = self.mm.create_animation(concept=concept, output_path=output_path, duration=duration)
+        return str(path)
+
+
+# ---------------------------------------------------------------------------
+# High-level loop: Mistake → Practice
+# ---------------------------------------------------------------------------
+
+@dataclass
+class PracticeLoopResult:
+    mistake_report: MistakeReport
+    practice_questions: list[GeneratedQuestion] = field(default_factory=list)
+
+
+class NovaOrchestrator:
+    """
+    The cool central brain.
+    """
+
+    def __init__(self, llm_call, multimodal_service=None):
+        self.mistake_finder = MistakeFinderAgent(llm_call)
+        self.question_designer = QuestionDesignerAgent(llm_call)
+        self.visual = VisualExplainerAgent(llm_call, multimodal_service)
+
+    def mistake_to_practice(
+        self,
+        problem: str,
+        student_solution: str,
+        topic: str,
+        memory: Optional[StudentMemory] = None,
+        style: str = "kind",
+        n_questions: int = 2,
+    ) -> PracticeLoopResult:
+        """
+        1. Find the mistake
+        2. Log it into memory
+        3. Generate targeted practice questions
+        """
+        report = self.mistake_finder.analyze(
+            problem=problem,
+            student_solution=student_solution,
+            topic=topic,
+            style=style,
+        )
+
+        if memory:
+            memory.log_mistake(
+                topic=report.topic,
+                mistake_type=report.error_type,
+                example=report.error_location,
+            )
+            memory.update_mastery(topic, 0.35)  # temporary low score after mistake
+
+        questions = self.question_designer.generate(
+            topic=topic,
+            difficulty="medium",
+            based_on_mistake=report,
+            count=n_questions,
+            style=style,
+        )
+
+        return PracticeLoopResult(mistake_report=report, practice_questions=questions)
