@@ -8,6 +8,7 @@ from .agents import (
     GeneratedQuestion,
     PracticeLoopResult,
 )
+from .llm import LLMClient, get_llm, get_llm_or_fake
 
 __all__ = [
     "StudentMemory",
@@ -18,4 +19,7 @@ __all__ = [
     "MistakeReport",
     "GeneratedQuestion",
     "PracticeLoopResult",
+    "LLMClient",
+    "get_llm",
+    "get_llm_or_fake",
 ]
