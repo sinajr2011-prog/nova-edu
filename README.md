@@ -1,83 +1,85 @@
 # Nova-Edu
 
-> **The first specialized Iranian educational LLM + Visual + Multi-Agent Tutor**  
-> Built to power learning platforms, not just chat.
+> **Toward the best independent Iranian educational neural model**  
+> Not just a chatbot wrapper — a specialized multi-agent teaching system with its own training path.
 
-**Status:** Core engine + Platform API are live 🔥
-
----
-
-## What Nova is now
-
-- Multi-agent educational brain (Mistake Finder, Question Designer, Memory, Visual)
-- Real LLM connection (OpenRouter / Qwen / OpenAI-compatible)
-- Gradio UI for direct use
-- **REST API for integration into educational platforms**
+**Status:** Intelligence layer + platform API + independent-model roadmap are live 🔥
 
 ---
 
-## Run options
+## The Ambition
 
-### 1) Local UI
+Nova is being built to become:
+
+1. A **specialized educational model** fine-tuned on Iranian curriculum / Konkur / Tizhooshan / Olympiad pedagogy
+2. A **multi-agent tutor** (Mistake Finder, Question Designer, Memory, Visual)
+3. A **platform engine** other edtech products can call
+4. Eventually **independent** from cloud APIs through local weights + local inference
+
+---
+
+## What exists today
+
+### Core intelligence
+- Multi-agent orchestration
+- Long-term student memory
+- Mistake → practice loop
+- Gradio UI
+- REST API for platforms
+
+### Independent model path
+- Serious SFT trainer (`training/train_sft.py`)
+- DPO skeleton (`training/train_dpo.py`)
+- Local inference engine (`core/local_engine.py`)
+- Educational evaluation harness (`evaluation/run_eval.py`)
+- Doctrine doc (`docs/INDEPENDENT_MODEL.md`)
+
+---
+
+## Run
+
 ```bash
 pip install -r requirements.txt
+
+# UI
 python app/ui.py
-```
 
-### 2) Platform API
-```bash
-uvicorn api.main:app --host 0.0.0.0 --port 8000 --reload
-```
-Open docs: `http://localhost:8000/docs`
+# API
+uvicorn api.main:app --reload --port 8000
 
-### 3) Terminal demo
-```bash
-python -m core.demo_loop
+# Train your own Nova adapter
+python training/train_sft.py --data data/sft/your_data.jsonl --out outputs/nova-edu-sft
+
+# Use local model instead of cloud
+export NOVA_LOCAL_MODEL=outputs/nova-edu-sft
 ```
 
 ---
 
-## Platform Integration
+## Independence Ladder
 
-Any learning product can call Nova:
+| Level | State |
+|------|------|
+| 0 | Cloud API demo |
+| 1 | Fine-tuned Nova adapters |
+| 2 | Preference-optimized teaching specialist |
+| 3 | Local-first independent stack |
 
-| Endpoint | Use case |
-|----------|----------|
-| `POST /v1/mistake-analysis` | Analyze student work + generate practice |
-| `POST /v1/generate-questions` | Create targeted questions |
-| `POST /v1/tutor-chat` | In-app tutor |
-| `GET /v1/students/{id}/memory` | Personalization data |
-
-Guides:
-- `api/README.md`
-- `integrations/README.md`
-- `integrations/kharazmika_adapter.md`
+We are building Level 1–3 infrastructure now.
 
 ---
 
-## Core architecture
+## Why this can become the best
 
-```
-Educational Platform (Kharazmika / LMS / App)
-                ↓ REST
-           Nova API layer
-                ↓
-     Agents + Memory + LLM + Multimodal
-```
+Because “best” is defined correctly:
+- curriculum fidelity
+- pedagogical clarity
+- mistake diagnosis
+- practice generation
+- Persian educational language
+- measurable evaluation
 
-Nova = intelligence engine  
-Platform = student experience
-
----
-
-## Environment
-
-```bash
-export OPENROUTER_API_KEY="..."
-export NOVA_MODEL="qwen/qwen2.5-14b-instruct"
-# optional image/video
-export FAL_KEY="..."
-```
+Not generic chat entertainment.
 
 ---
 
