@@ -1,22 +1,46 @@
-# Training
+# Training Nova as an Independent Model
 
-## Planned Stack (Phase 1)
+## Objective
 
-- **Base models**: Qwen2.5-7B-Instruct / Qwen2.5-14B-Instruct (primary candidates)
-- **Method**: QLoRA (4-bit) via Unsloth for speed and memory efficiency
-- **Framework options**: Unsloth, Axolotl, or plain Hugging Face + PEFT
+Produce a specialized educational model that can eventually run independently of cloud APIs.
 
-## Current Status
+## Pipeline
 
-No training runs yet.  
-We are still in Phase 0 (building the dataset).
+1. **Collect & clean data** (`data/`)
+2. **SFT** (`training/train_sft.py`)
+3. **Preference optimization** (`training/train_dpo.py`)
+4. **Evaluate** (`evaluation/run_eval.py`)
+5. **Serve locally** (`core/local_engine.py`)
 
-## Next Steps
+## Recommended first training run
 
-1. Finalize first clean dataset slice (start with Grade 9 Math – Sets & related topics)
-2. Create a minimal Unsloth training script
-3. Run a small experimental fine-tune and evaluate
+```bash
+python training/train_sft.py \
+  --model Qwen/Qwen2.5-7B-Instruct \
+  --data data/sft/nova_grade9.jsonl \
+  --out outputs/nova-edu-7b-sft \
+  --epochs 1 \
+  --batch-size 2 \
+  --grad-accum 8
+```
 
----
+Then point the app to local weights:
 
-When ready, training configs and scripts will live in this folder.
+```bash
+export NOVA_LOCAL_MODEL="outputs/nova-edu-7b-sft"
+python app/ui.py
+```
+
+## Data philosophy
+
+High-value educational pairs only:
+- concept explanation
+- worked example
+- mistake repair
+- exam-style question + full solution
+
+## Model targets
+
+- Fast iteration: Qwen2.5-7B
+- Strong production target: Qwen2.5-14B
+- Later: preference-optimized Nova specialist
