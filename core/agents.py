@@ -2,8 +2,8 @@
 """
 Nova Agent System — core orchestration.
 
-This module defines the main agents and a simple runner that can
-coordinate Mistake Finder → Question Designer loops, and more.
+Coordinates Mistake Finder, Question Designer, Visual Explainer,
+and optional NovaBrain (routing + RAG + pedagogy).
 """
 
 from __future__ import annotations
@@ -12,11 +12,6 @@ from dataclasses import dataclass, field
 from typing import Any, Optional
 
 from core.memory_store import StudentMemory
-
-
-# ---------------------------------------------------------------------------
-# Prompt building blocks
-# ---------------------------------------------------------------------------
 
 BASE_PERSONA = (
     "You are Nova, an expert Iranian educational tutor for secondary school, "
@@ -35,10 +30,6 @@ STYLES = {
 def style_prefix(style: str = "kind") -> str:
     return STYLES.get(style, STYLES["kind"])
 
-
-# ---------------------------------------------------------------------------
-# Agent outputs
-# ---------------------------------------------------------------------------
 
 @dataclass
 class MistakeReport:
@@ -69,20 +60,8 @@ class GeneratedQuestion:
     question_type: str = "short_answer"
 
 
-# ---------------------------------------------------------------------------
-# Agents (LLM-agnostic interface)
-# ---------------------------------------------------------------------------
-
 class BaseAgent:
-    """
-    All agents only build prompts / structure data.
-    The actual LLM call is injected from outside (so we stay flexible).
-    """
-
     def __init__(self, llm_call):
-        """
-        llm_call: a function (system: str, user: str) -> str
-        """
         self.llm = llm_call
 
 
@@ -112,9 +91,9 @@ class MistakeFinderAgent(BaseAgent):
         return self._parse(raw, topic)
 
     def _parse(self, raw: str, topic: str) -> MistakeReport:
-        # Simple robust parser
+        import re
+
         def extract(label: str) -> str:
-            import re
             m = re.search(rf"{label}:\s*(.*?)(?=\n(?:نقطه|نوع|توضیح|راه‌حل|درس)|$)", raw, re.S)
             return m.group(1).strip() if m else raw.strip()
 
@@ -141,7 +120,10 @@ class QuestionDesignerAgent(BaseAgent):
 
         extra = ""
         if based_on_mistake:
-            extra = f"\nاین سوال باید روی ضعفی که در این اشتباه دیده شده تمرکز کند:\n{based_on_mistake.to_prompt_block()}"
+            extra = (
+                "\nاین سوال باید روی ضعفی که در این اشتباه دیده شده تمرکز کند:\n"
+                + based_on_mistake.to_prompt_block()
+            )
 
         user = f"""یک سوال {difficulty} در موضوع «{topic}» طراحی کن.{extra}
 
@@ -173,8 +155,6 @@ class QuestionDesignerAgent(BaseAgent):
 
 
 class VisualExplainerAgent(BaseAgent):
-    """Connects to MultimodalService."""
-
     def __init__(self, llm_call, multimodal_service=None):
         super().__init__(llm_call)
         self.mm = multimodal_service
@@ -188,13 +168,11 @@ class VisualExplainerAgent(BaseAgent):
     def create_animation(self, concept: str, output_path: str, duration: int = 5) -> str:
         if self.mm is None:
             raise RuntimeError("MultimodalService not attached")
-        path = self.mm.create_animation(concept=concept, output_path=output_path, duration=duration)
+        path = self.mm.create_animation(
+            concept=concept, output_path=output_path, duration=duration
+        )
         return str(path)
 
-
-# ---------------------------------------------------------------------------
-# High-level loop: Mistake → Practice
-# ---------------------------------------------------------------------------
 
 @dataclass
 class PracticeLoopResult:
@@ -202,15 +180,37 @@ class PracticeLoopResult:
     practice_questions: list[GeneratedQuestion] = field(default_factory=list)
 
 
-class NovaOrchestrator:
-    """
-    The cool central brain.
-    """
+@dataclass
+class TeachResult:
+    answer: str
+    route_expert: str = "general"
+    pedagogy_score: float = 0.0
+    used_rag: bool = False
 
-    def __init__(self, llm_call, multimodal_service=None):
+
+class NovaOrchestrator:
+    """Central orchestrator for Nova agents + optional neural brain."""
+
+    def __init__(self, llm_call, multimodal_service=None, brain=None):
+        self.llm = llm_call
         self.mistake_finder = MistakeFinderAgent(llm_call)
         self.question_designer = QuestionDesignerAgent(llm_call)
         self.visual = VisualExplainerAgent(llm_call, multimodal_service)
+        self.brain = brain
+
+    def teach(self, user_text: str, style: str = "kind") -> TeachResult:
+        """Best-effort teaching path using NovaBrain when available."""
+        base = f"{BASE_PERSONA}\n{style_prefix(style)}"
+        if self.brain is not None:
+            result = self.brain.think(user_text, base_system=base, use_rag=True)
+            return TeachResult(
+                answer=result.answer,
+                route_expert=result.route.expert,
+                pedagogy_score=result.pedagogy.total,
+                used_rag=result.used_rag,
+            )
+        answer = self.llm(base, user_text)
+        return TeachResult(answer=answer)
 
     def mistake_to_practice(
         self,
@@ -221,11 +221,6 @@ class NovaOrchestrator:
         style: str = "kind",
         n_questions: int = 2,
     ) -> PracticeLoopResult:
-        """
-        1. Find the mistake
-        2. Log it into memory
-        3. Generate targeted practice questions
-        """
         report = self.mistake_finder.analyze(
             problem=problem,
             student_solution=student_solution,
@@ -239,7 +234,7 @@ class NovaOrchestrator:
                 mistake_type=report.error_type,
                 example=report.error_location,
             )
-            memory.update_mastery(topic, 0.35)  # temporary low score after mistake
+            memory.update_mastery(topic, 0.35)
 
         questions = self.question_designer.generate(
             topic=topic,
