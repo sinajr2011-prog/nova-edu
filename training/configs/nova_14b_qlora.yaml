@@ -1,0 +1,55 @@
+model_name: Qwen/Qwen2.5-14B-Instruct
+output_dir: outputs/nova-edu-14b-sft
+
+data:
+  train_file: data/sft/build/train.jsonl
+  val_file: data/sft/build/val.jsonl
+  max_seq_length: 4096
+
+lora:
+  r: 32
+  alpha: 32
+  dropout: 0.05
+  target_modules:
+    - q_proj
+    - k_proj
+    - v_proj
+    - o_proj
+    - gate_proj
+    - up_proj
+    - down_proj
+
+train:
+  precision: qlora_4bit
+  epochs: 2
+  learning_rate: 1.5e-4
+  per_device_batch_size: 1
+  gradient_accumulation_steps: 16
+  warmup_ratio: 0.03
+  weight_decay: 0.01
+  lr_scheduler: cosine
+  logging_steps: 5
+  save_strategy: epoch
+  seed: 42
+
+hardware:
+  recommended:
+    - 1x 24GB+ GPU with QLoRA (tight but possible)
+    - 1x 40GB / 48GB GPU preferred
+    - multi-GPU if available for throughput
+  tips:
+    - keep batch size 1 and raise grad accum
+    - start with max_seq_length 2048 if VRAM is tight
+    - run 7B smoke test first on same data
+
+command_example: |
+  python training/train_sft.py \
+    --model Qwen/Qwen2.5-14B-Instruct \
+    --data data/sft/build/train.jsonl \
+    --out outputs/nova-edu-14b-sft \
+    --max-seq-length 4096 \
+    --epochs 2 \
+    --batch-size 1 \
+    --grad-accum 16 \
+    --lr 1.5e-4 \
+    --lora-r 32
