@@ -1,69 +1,71 @@
 # Nova-Edu
 
-> Specialized Iranian educational neural system with a full dataset → CPT → SFT → DPO → merge pipeline.
+> Specialized Iranian educational neural system — dataset factory, 7B/14B training configs, agents, memory, API.
 
-**Status:** Data + training factory is online 🔥
+**Status:** Dataset expansion + 14B training track ready 🔥
 
 ---
 
-## Bigger than fine-tuning
+## What just landed
 
-Nova now has the full specialist-model factory:
+### 1) Bigger Grade 9 dataset
+- `data/sft/grade9_math_large.jsonl` — multi-topic math teaching pairs
+- `data/sft/grade9_physics_seed.jsonl` — physics seeds
+- Expanded `topic_seeds.jsonl`
+- Holdout eval: `evaluation/benchmarks/grade9_math_holdout.jsonl`
 
-1. **Dataset build** with pedagogy filtering
-2. **Synthetic topic expansion**
-3. **Optional Continued PreTraining**
-4. **SFT**
-5. **DPO pair mining + preference optimization**
-6. **LoRA merge for independent deployment**
-7. **Local inference + API + agents + neural brain**
+### 2) 7B + 14B training configs
+- `training/configs/nova_7b_qlora.yaml`
+- `training/configs/nova_14b_qlora.yaml`
+- `training/CLOUD_GPU.md` — exact cloud/GPU playbook
+
+### 3) Extra factory tools
+- dataset coverage report
+- full CPT → SFT → DPO → merge pipeline
+- pedagogy filtering
+- synthetic expansion
+
+---
+
+## Fast path
 
 ```bash
-# build data
-python data/pipeline/build_dataset.py --inputs data/examples/*.jsonl --out-dir data/sft/build
+# build mixed dataset
+python data/pipeline/build_dataset.py \
+  --inputs data/examples/*.jsonl data/sft/*.jsonl \
+  --out-dir data/sft/build
 
-# full pipeline
-python training/run_full_pipeline.py \
-  --inputs data/examples/*.jsonl \
+# coverage report
+python data/pipeline/report_dataset.py data/sft/build/*.jsonl
+
+# 7B smoke train
+python training/train_sft.py \
   --model Qwen/Qwen2.5-7B-Instruct \
-  --out-prefix outputs/nova-edu-7b
+  --data data/sft/build/train.jsonl \
+  --out outputs/nova-edu-7b-sft
+
+# 14B production-style train
+python training/train_sft.py \
+  --model Qwen/Qwen2.5-14B-Instruct \
+  --data data/sft/build/train.jsonl \
+  --out outputs/nova-edu-14b-sft \
+  --batch-size 1 --grad-accum 16 --lr 1.5e-4 --lora-r 32
 ```
+
+See `training/CLOUD_GPU.md` for VRAM strategy.
 
 ---
 
-## Core capabilities
+## System map
 
-- Multi-agent tutoring (mistake analysis, practice generation)
-- Student memory
-- Subject routing + educational RAG + pedagogy rewards
-- Platform API
-- Independent model path
-
----
-
-## Quick run
-
-```bash
-pip install -r requirements.txt
-python app/ui.py
-# or
-uvicorn api.main:app --reload --port 8000
-```
-
-Local model:
-```bash
-export NOVA_LOCAL_MODEL=outputs/nova-edu-7b-merged
-```
-
----
-
-## Key folders
-
-- `data/pipeline/` — dataset factory
-- `training/` — CPT / SFT / DPO / merge / orchestrator
-- `neural/` — MoE routing, RAG, pedagogy reward, brain
-- `core/` — agents, memory, local engine
-- `api/` — platform integration
+| Layer | Path |
+|------|------|
+| Data factory | `data/pipeline/` |
+| Neural brain | `neural/` |
+| Agents/memory | `core/` |
+| Training | `training/` |
+| API | `api/` |
+| UI | `app/` |
 
 ---
 
