@@ -18,7 +18,7 @@ ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from core.llm import get_llm_or_fake
+from core.local_engine import get_best_engine
 from core.memory_store import StudentMemory
 from core.agents import NovaOrchestrator
 
@@ -28,11 +28,9 @@ app = FastAPI(
     version="0.1.0",
 )
 
-llm = get_llm_or_fake()
+llm = get_best_engine()
 orchestrator = NovaOrchestrator(llm_call=llm)
 
-
-# -------------------- Schemas --------------------
 
 class MistakeAnalysisRequest(BaseModel):
     student_id: str = Field(..., examples=["student_01"])
@@ -65,13 +63,9 @@ class MemoryUpdateRequest(BaseModel):
     weakness: Optional[str] = None
 
 
-# -------------------- Helpers --------------------
-
 def get_memory(student_id: str) -> StudentMemory:
     return StudentMemory(student_id)
 
-
-# -------------------- Endpoints --------------------
 
 @app.get("/health")
 def health():
@@ -146,7 +140,6 @@ def generate_questions(payload: QuestionRequest) -> dict[str, Any]:
 
 @app.post("/v1/tutor-chat")
 def tutor_chat(payload: TutorChatRequest) -> dict[str, Any]:
-    """Simple tutoring endpoint for platforms that want free-form help."""
     try:
         memory = get_memory(payload.student_id)
         focus = ", ".join(memory.get_focus_topics()) or "عمومی"
@@ -160,7 +153,10 @@ def tutor_chat(payload: TutorChatRequest) -> dict[str, Any]:
             system += f" Current topic: {payload.topic}."
 
         answer = llm(system, payload.message)
-        memory.log_session(summary=payload.message[:120], topics=[payload.topic] if payload.topic else [])
+        memory.log_session(
+            summary=payload.message[:120],
+            topics=[payload.topic] if payload.topic else [],
+        )
 
         return {
             "student_id": payload.student_id,
@@ -198,4 +194,5 @@ def update_memory(student_id: str, payload: MemoryUpdateRequest) -> dict[str, An
 
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run("api.main:app", host="0.0.0.0", port=8000, reload=True)
