@@ -1,46 +1,76 @@
-# Training Nova as an Independent Model
+# Training Nova at Scale
 
-## Objective
+## The full path (bigger than plain fine-tune)
 
-Produce a specialized educational model that can eventually run independently of cloud APIs.
+```text
+Raw educational sources
+        ↓
+Dataset build + pedagogy filter
+        ↓
+Optional Continued PreTraining (CPT)
+        ↓
+SFT (teaching instructions)
+        ↓
+DPO (pedagogy-ranked preferences)
+        ↓
+Merge LoRA → independent weights
+        ↓
+Eval + local serve
+```
 
-## Pipeline
+## Commands
 
-1. **Collect & clean data** (`data/`)
-2. **SFT** (`training/train_sft.py`)
-3. **Preference optimization** (`training/train_dpo.py`)
-4. **Evaluate** (`evaluation/run_eval.py`)
-5. **Serve locally** (`core/local_engine.py`)
+### 1) Build dataset
+```bash
+python data/pipeline/build_dataset.py \
+  --inputs data/examples/*.jsonl \
+  --out-dir data/sft/build \
+  --min-pedagogy 0.3
+```
 
-## Recommended first training run
+### 2) Synthetic seed expansion
+```bash
+python data/pipeline/synthesize_from_topics.py \
+  --topics data/curriculum/topic_seeds.jsonl \
+  --out data/sft/build/synthetic_seed.jsonl \
+  --templates-only
+```
 
+### 3) SFT
 ```bash
 python training/train_sft.py \
   --model Qwen/Qwen2.5-7B-Instruct \
-  --data data/sft/nova_grade9.jsonl \
-  --out outputs/nova-edu-7b-sft \
-  --epochs 1 \
-  --batch-size 2 \
-  --grad-accum 8
+  --data data/sft/build/train.jsonl \
+  --out outputs/nova-edu-7b-sft
 ```
 
-Then point the app to local weights:
-
+### 4) DPO pair mining
 ```bash
-export NOVA_LOCAL_MODEL="outputs/nova-edu-7b-sft"
+python data/pipeline/mine_dpo_pairs.py \
+  --input data/sft/build/candidates.jsonl \
+  --out data/sft/build/dpo_pairs.jsonl
+```
+
+### 5) Full orchestrated pipeline
+```bash
+python training/run_full_pipeline.py \
+  --inputs data/examples/*.jsonl \
+  --model Qwen/Qwen2.5-7B-Instruct \
+  --out-prefix outputs/nova-edu-7b
+```
+
+### 6) Local independent mode
+```bash
+export NOVA_LOCAL_MODEL=outputs/nova-edu-7b-merged
 python app/ui.py
 ```
 
-## Data philosophy
+## Model sizes
 
-High-value educational pairs only:
-- concept explanation
-- worked example
-- mistake repair
-- exam-style question + full solution
+- **7B**: fast iteration / consumer GPU
+- **14B**: stronger production specialist
 
-## Model targets
+## Quality rule
 
-- Fast iteration: Qwen2.5-7B
-- Strong production target: Qwen2.5-14B
-- Later: preference-optimized Nova specialist
+Do not scale garbage.
+Every accepted assistant response should teach.
