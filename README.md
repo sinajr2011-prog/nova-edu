@@ -1,92 +1,70 @@
 # Nova-Edu
 
-> **Specialized Iranian educational neural system**  
-> Multi-agent tutor + deep learning stack + platform API + path to independent model weights.
+> Specialized Iranian educational neural system with a full dataset → CPT → SFT → DPO → merge pipeline.
 
-**Status:** Neural stack ignited 🔥
-
----
-
-## Why Nova can beat generic giants on this battlefield
-
-ChatGPT-class systems are generalists.
-Nova is being built as a **curriculum-specialist teaching machine**:
-
-- mistake diagnosis
-- pedagogical step-by-step answers
-- targeted practice generation
-- student memory
-- subject-aware routing
-- textbook-grounded retrieval
-- pedagogy reward filtering
-- independent fine-tuning path
-
-Generic models win open chat.
-Specialists win when the metric is **teaching Iranian students better**.
+**Status:** Data + training factory is online 🔥
 
 ---
 
-## Neural / Deep Learning Core
+## Bigger than fine-tuning
 
-```
-neural/
-├── brain.py                      # MoE routing + RAG + pedagogy scoring
-├── architecture/moe_subjects.py  # subject-aware expert routing
-├── training/curriculum.py        # curriculum learning stages
-├── retrieval/edu_rag.py          # educational retrieval
-└── reward/pedagogy_reward.py     # teaching-quality reward signals
+Nova now has the full specialist-model factory:
+
+1. **Dataset build** with pedagogy filtering
+2. **Synthetic topic expansion**
+3. **Optional Continued PreTraining**
+4. **SFT**
+5. **DPO pair mining + preference optimization**
+6. **LoRA merge for independent deployment**
+7. **Local inference + API + agents + neural brain**
+
+```bash
+# build data
+python data/pipeline/build_dataset.py --inputs data/examples/*.jsonl --out-dir data/sft/build
+
+# full pipeline
+python training/run_full_pipeline.py \
+  --inputs data/examples/*.jsonl \
+  --model Qwen/Qwen2.5-7B-Instruct \
+  --out-prefix outputs/nova-edu-7b
 ```
 
-Plus:
-- `training/train_sft.py` — real SFT pipeline
-- `training/train_dpo.py` — preference optimization path
-- `core/local_engine.py` — local independent inference
-- `evaluation/` — educational eval harness
+---
+
+## Core capabilities
+
+- Multi-agent tutoring (mistake analysis, practice generation)
+- Student memory
+- Subject routing + educational RAG + pedagogy rewards
+- Platform API
+- Independent model path
 
 ---
 
-## Full system
-
-| Layer | Role |
-|------|------|
-| Agents | Mistake Finder, Question Designer, Visual Explainer |
-| Memory | long-term student model |
-| Neural Brain | routing + retrieval + pedagogy scoring |
-| API | integrate into Kharazmika / LMS / apps |
-| Training | SFT → DPO → local specialist weights |
-
----
-
-## Run
+## Quick run
 
 ```bash
 pip install -r requirements.txt
-
-# UI
 python app/ui.py
-
-# API
+# or
 uvicorn api.main:app --reload --port 8000
+```
 
-# Train specialist
-python training/train_sft.py --data data/sft/your_data.jsonl --out outputs/nova-edu-sft
-
-# Local independent mode
-export NOVA_LOCAL_MODEL=outputs/nova-edu-sft
+Local model:
+```bash
+export NOVA_LOCAL_MODEL=outputs/nova-edu-7b-merged
 ```
 
 ---
 
-## Roadmap to true dominance in EdTech AI
+## Key folders
 
-1. High-quality Iranian educational dataset at scale
-2. SFT on Qwen2.5-7B/14B
-3. Pedagogy-ranked DPO pairs
-4. Subject experts / adapters
-5. Hard eval on Konkur-style + teaching quality
-6. Local-first deployment
+- `data/pipeline/` — dataset factory
+- `training/` — CPT / SFT / DPO / merge / orchestrator
+- `neural/` — MoE routing, RAG, pedagogy reward, brain
+- `core/` — agents, memory, local engine
+- `api/` — platform integration
 
 ---
 
-**Built with fire by [Sina Jafari](https://github.com/sinajr2011-prog)**  
-Started: November 2026
+**Built with fire by [Sina Jafari](https://github.com/sinajr2011-prog)**
