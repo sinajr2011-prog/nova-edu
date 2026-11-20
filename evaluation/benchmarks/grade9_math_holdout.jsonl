@@ -1,0 +1,8 @@
+{"id": "g9m_001", "question": "اگر A={1,2,3} و B={3,4} باشد، A∪B چیست؟", "answer": "{1,2,3,4}", "type": "short_answer", "topic": "sets", "difficulty": "easy"}
+{"id": "g9m_002", "question": "اگر A={1,2,3,4} و B={2,4,6} باشد، A−B چیست؟", "answer": "{1,3}", "type": "short_answer", "topic": "sets", "difficulty": "easy"}
+{"id": "g9m_003", "question": "معادله 2x+5=13 را حل کنید.", "answer": "x=4", "type": "short_answer", "topic": "equations", "difficulty": "easy"}
+{"id": "g9m_004", "question": "معادله 5x-7=3x+9 را حل کنید.", "answer": "x=8", "type": "short_answer", "topic": "equations", "difficulty": "medium"}
+{"id": "g9m_005", "question": "عبارت 4x+3y-2x+5y را ساده کنید.", "answer": "2x+8y", "type": "short_answer", "topic": "expressions", "difficulty": "easy"}
+{"id": "g9m_006", "question": "نامعادله 2x+3>7 را حل کنید.", "answer": "x>2", "type": "short_answer", "topic": "inequalities", "difficulty": "medium"}
+{"id": "g9m_007", "question": "|x-3|=5 را حل کنید.", "answer": "x=-2 یا x=8", "type": "short_answer", "topic": "absolute_value", "difficulty": "medium"}
+{"id": "g9m_008", "question": "اگر n(A)=12 و n(B)=9 و n(A∩B)=4 باشد، n(A∪B)؟", "answer": "17", "type": "short_answer", "topic": "sets", "difficulty": "hard"}
