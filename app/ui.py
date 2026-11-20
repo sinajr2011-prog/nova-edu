@@ -10,22 +10,17 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-# Allow running from repo root
 ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 import gradio as gr
 
-from core.llm import get_llm_or_fake
+from core.local_engine import get_best_engine
 from core.memory_store import StudentMemory
 from core.agents import NovaOrchestrator
 
-
-# ---------------------------------------------------------------------------
-# Global (simple for demo)
-# ---------------------------------------------------------------------------
-llm = get_llm_or_fake()
+llm = get_best_engine()
 orchestrator = NovaOrchestrator(llm_call=llm)
 
 
@@ -33,10 +28,6 @@ def get_memory(student_id: str) -> StudentMemory:
     sid = (student_id or "default_student").strip() or "default_student"
     return StudentMemory(sid)
 
-
-# ---------------------------------------------------------------------------
-# Tabs logic
-# ---------------------------------------------------------------------------
 
 def run_mistake_loop(
     student_id: str,
@@ -106,14 +97,12 @@ def show_memory(student_id: str):
     if data.get("mistake_history"):
         lines.append("\n**Recent Mistakes:**")
         for m in data["mistake_history"][-5:]:
-            lines.append(f"- [{m.get('topic')}] {m.get('mistake_type')}: {m.get('example', '')[:80]}")
+            lines.append(
+                f"- [{m.get('topic')}] {m.get('mistake_type')}: {m.get('example', '')[:80]}"
+            )
 
     return "\n".join(lines)
 
-
-# ---------------------------------------------------------------------------
-# UI
-# ---------------------------------------------------------------------------
 
 def build_ui():
     with gr.Blocks(
@@ -201,8 +190,7 @@ def build_ui():
         gr.Markdown(
             """
             ---
-            **نکته:** اگر `OPENROUTER_API_KEY` یا `OPENAI_API_KEY` تنظیم شده باشد، از مدل واقعی استفاده می‌شود.  
-            در غیر این صورت حالت دمو (fake LLM) فعال است.
+            **Engine priority:** `NOVA_LOCAL_MODEL` → cloud API → fake demo
             """
         )
 
